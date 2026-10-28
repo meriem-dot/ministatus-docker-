@@ -6,6 +6,9 @@ on:
     tags: ["v*"]
   pull_request:
     branches: [main]
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
 
 env:
   IMAGE: ministatus
@@ -50,7 +53,7 @@ jobs:
         run: |
           echo "### Rapport Trivy" >> "$GITHUB_STEP_SUMMARY"
           for s in CRITICAL HIGH MEDIUM; do
-            n=$(jq "[.Results[]?.Vulnerabilities[]? | select(.Severity==\"$s\")] | length" trivy-report.json)
+            n=$(jq "[.Results[]?.Vulnerabilities[]? | select(.Severity=='$s')] | length" trivy-report.json)
             echo "- $s : $n" >> "$GITHUB_STEP_SUMMARY"
           done
 
